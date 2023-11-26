@@ -112,18 +112,15 @@ class MovieItem extends StatelessWidget {
                 ),
                 child: InkWell(
                   onTap: () {
-                    if (controller.model!.results[index] ==
-                        controller.model!.results[index]) {
-                      controller.toggleFunction(
-                          controller.model!.results[index].id,
-                          controller.model!.results[index]);
-                    }
+                    controller.toggleFunction(
+                        controller.model!.results[index].id,
+                        controller.model!.results[index]);
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      controller.addToFavorite
+                      controller.addToFavorite == true
                           ? const Icon(Icons.favorite, color: Colors.red)
                           : const Icon(Icons.favorite_border,
                               color: Colors.red),
@@ -138,7 +135,8 @@ class MovieItem extends StatelessWidget {
             ),
             Text(
               controller.model!.results[index].title,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style:
+                  TextStyle(fontWeight: FontWeight.w600, fontSize: getFont(18)),
             ),
             Text(
                 '${controller.model!.results[index].releaseDate.month} / ${controller.model!.results[index].releaseDate.year}'),

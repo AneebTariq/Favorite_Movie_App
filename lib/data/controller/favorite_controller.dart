@@ -1,9 +1,9 @@
 // ignore_for_file: avoid_print
-
+import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:movie_app/data/models/movie_model.dart';
 import 'package:movie_app/data/repositories/home_repo.dart';
-import '../models/sharepref_movie_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../share_pref/shareprefrence.dart';
 
 class FavoriteController extends GetxController {
@@ -14,12 +14,14 @@ class FavoriteController extends GetxController {
   String token =
       'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MTI2ODQwNTUyYmIwODUzNmFkMTliM2FiOTFlYWQ5ZCIsInN1YiI6IjY1NjBhNzc4NzA2ZTU2MDExYjQ5NDFhNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.6UoKmnifHVMX77wjEs9Mp5CrSDRKMsOFBetPkgF6Zm0';
 
-  final RxList<Result> favoriteMovies = <Result>[].obs;
+  final RxList<SharePrefMovieModel> favoriteMovies =
+      <SharePrefMovieModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
     getMoviesList();
+    loadFavoriteMovies();
   }
 
   // Fetch movies list and handle null safety with Rx
@@ -35,38 +37,36 @@ class FavoriteController extends GetxController {
     return model;
   }
 
-  Future<void> loadFavoriteMovies() async {
-    try {
-      final favoriteMovieIds = await sharedPrefClient.getFavoriteMovieIds();
-      if (favoriteMovieIds != null) {
-        List<Result?> fetchedMovies = await Future.wait(
-          favoriteMovieIds.map((id) async {
-            return await sharedPrefClient.getMovieFromPrefs('favorite_$id');
-          }),
-        );
+  void loadFavoriteMovies() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-        fetchedMovies.removeWhere((movie) => movie == null);
-        favoriteMovies.assignAll(fetchedMovies
-            .cast<SharePrefMovieModel>()
-            .whereType<SharePrefMovieModel>() as Iterable<Result>);
-      }
-    } catch (e) {
-      print('Error loading favorite movies: $e');
-      // Handle error, show error message, log, etc.
+    Iterable<String> keys =
+        prefs.getKeys().where((key) => key.startsWith('favorite_'));
+    for (String key in keys) {
+      String? value = prefs.getString(key);
+      final movieMap = jsonDecode(value!);
+      SharePrefMovieModel favoriteMovie =
+          SharePrefMovieModel.fromJson(movieMap);
+      favoriteMovies.add(favoriteMovie);
+      print(favoriteMovies);
     }
   }
 
-  Future<void> toggleFunction(int id, Result favoriteMovie) async {
+  Future<bool> toggleFunction(int id, SharePrefMovieModel favoriteMovie) async {
+    final bool isFavorite = favoriteMovies.contains(favoriteMovie);
     addToFavorite = !addToFavorite;
-
-    if (addToFavorite) {
+    if (!isFavorite) {
       favoriteMovies.add(favoriteMovie);
-      await sharedPrefClient.saveMovieToPrefs('favor$id', favoriteMovie);
-      print("favorite movies ya hain $favoriteMovies");
+      await sharedPrefClient.saveMovieToPrefs('favorite_$id', favoriteMovie);
+      print("Added to favorites: $favoriteMovie");
     } else {
+      favoriteMovies.remove(favoriteMovie);
       await sharedPrefClient.removeFromFavorites(id);
+      print("Removed from favorites: $favoriteMovie");
     }
-    loadFavoriteMovies(); // Refresh favorite movies after adding/removing
+    loadFavoriteMovies();
+    !isFavorite;
+    return addToFavorite; // Return updated favorite status
   }
 
   Future<MoviesModel> getData() {
@@ -76,4 +76,4 @@ class FavoriteController extends GetxController {
     });
   }
 }
-//vhsdiojodcpokx
+//vhsdiojodcpok

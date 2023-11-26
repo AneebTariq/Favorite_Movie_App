@@ -10,7 +10,7 @@ class SharedPrefClient {
     return _prefs!;
   }
 
-  Future<void> saveMovieToPrefs(String key, Result movie) async {
+  Future<void> saveMovieToPrefs(String key, SharePrefMovieModel movie) async {
     final prefs = await _getPrefs();
     final movieMap = movie.toJson();
     await prefs.setString(key, jsonEncode(movieMap));
@@ -18,15 +18,15 @@ class SharedPrefClient {
 
   Future<void> removeFromFavorites(int movieId) async {
     final prefs = await _getPrefs();
-    await prefs.remove('favorite_$movieId');
+    await prefs.remove("favorit$movieId");
   }
 
-  Future<Result?> getMovieFromPrefs(String key) async {
+  Future<SharePrefMovieModel?> getMovieFromPrefs(String key) async {
     final prefs = await _getPrefs();
     final movieString = prefs.getString(key);
     if (movieString != null) {
       final movieMap = jsonDecode(movieString);
-      return Result.fromJson(movieMap);
+      return SharePrefMovieModel.fromJson(movieMap);
     }
     return null;
   }

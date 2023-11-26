@@ -47,7 +47,11 @@ class FavoriteMoviesScreen extends StatelessWidget {
                                   //     fit: BoxFit.cover)
                                 ),
                                 child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    controller.toggleFunction(
+                                        controller.model!.results[index].id,
+                                        controller.model!.results[index]);
+                                  },
                                   child: Row(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -69,10 +73,12 @@ class FavoriteMoviesScreen extends StatelessWidget {
                             ),
                             Text(
                               movie.title,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w500),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: getFont(18)),
                             ),
-                            Text('${movie.releaseDate} / }'),
+                            Text(
+                                '${movie.releaseDate.month} / ${movie.releaseDate.year}'),
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: getWidth(10)),
