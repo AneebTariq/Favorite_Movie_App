@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:movie_app/config/constents/size_config.dart';
 import 'package:movie_app/config/styles/app_colors.dart';
 import 'package:movie_app/data/controller/favorite_controller.dart';
-import 'package:movie_app/data/models/sharepref_movie_model.dart';
 import '../favorite_screen/favorite_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -112,9 +111,14 @@ class MovieItem extends StatelessWidget {
                   //     fit: BoxFit.cover)
                 ),
                 child: InkWell(
-                  onTap: () => controller.toggleFunction(
-                      controller.model!.results[index].id,
-                      controller.model!.results[index]),
+                  onTap: () {
+                    if (controller.model!.results[index] ==
+                        controller.model!.results[index]) {
+                      controller.toggleFunction(
+                          controller.model!.results[index].id,
+                          controller.model!.results[index]);
+                    }
+                  },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,

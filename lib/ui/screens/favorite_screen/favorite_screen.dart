@@ -54,7 +54,8 @@ class FavoriteMoviesScreen extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       controller.addToFavorite == true
-                                          ? const Icon(Icons.favorite)
+                                          ? const Icon(Icons.favorite,
+                                              color: Colors.red)
                                           : const Icon(Icons.favorite_border,
                                               color: Colors.red),
                                       SizedBox(
