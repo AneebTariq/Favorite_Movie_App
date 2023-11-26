@@ -14,13 +14,11 @@ class FavoriteController extends GetxController {
   String token =
       'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MTI2ODQwNTUyYmIwODUzNmFkMTliM2FiOTFlYWQ5ZCIsInN1YiI6IjY1NjBhNzc4NzA2ZTU2MDExYjQ5NDFhNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.6UoKmnifHVMX77wjEs9Mp5CrSDRKMsOFBetPkgF6Zm0';
 
-  final RxList<SharePrefMovieModel> favoriteMovies =
-      <SharePrefMovieModel>[].obs;
+  final RxList<Result> favoriteMovies = <Result>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    loadFavoriteMovies();
     getMoviesList();
   }
 
@@ -41,7 +39,7 @@ class FavoriteController extends GetxController {
     try {
       final favoriteMovieIds = await sharedPrefClient.getFavoriteMovieIds();
       if (favoriteMovieIds != null) {
-        List<SharePrefMovieModel?> fetchedMovies = await Future.wait(
+        List<Result?> fetchedMovies = await Future.wait(
           favoriteMovieIds.map((id) async {
             return await sharedPrefClient.getMovieFromPrefs('favorite_$id');
           }),
@@ -50,7 +48,7 @@ class FavoriteController extends GetxController {
         fetchedMovies.removeWhere((movie) => movie == null);
         favoriteMovies.assignAll(fetchedMovies
             .cast<SharePrefMovieModel>()
-            .whereType<SharePrefMovieModel>());
+            .whereType<SharePrefMovieModel>() as Iterable<Result>);
       }
     } catch (e) {
       print('Error loading favorite movies: $e');
@@ -58,11 +56,13 @@ class FavoriteController extends GetxController {
     }
   }
 
-  Future<void> toggleFunction(int id, SharePrefMovieModel movieItem) async {
+  Future<void> toggleFunction(int id, Result favoriteMovie) async {
     addToFavorite = !addToFavorite;
 
     if (addToFavorite) {
-      await sharedPrefClient.saveMovieToPrefs('favorite_$id', movieItem);
+      favoriteMovies.add(favoriteMovie);
+      await sharedPrefClient.saveMovieToPrefs('favor$id', favoriteMovie);
+      print("favorite movies ya hain $favoriteMovies");
     } else {
       await sharedPrefClient.removeFromFavorites(id);
     }
@@ -70,7 +70,7 @@ class FavoriteController extends GetxController {
   }
 
   Future<MoviesModel> getData() {
-    return Future.delayed(const Duration(seconds: 3), () {
+    return Future.delayed(const Duration(seconds: 4), () {
       return model!;
       // throw Exception("Custom Error");
     });

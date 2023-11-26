@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../models/sharepref_movie_model.dart';
+import '../models/movie_model.dart';
 
 class SharedPrefClient {
   SharedPreferences? _prefs;
@@ -12,7 +10,7 @@ class SharedPrefClient {
     return _prefs!;
   }
 
-  Future<void> saveMovieToPrefs(String key, SharePrefMovieModel movie) async {
+  Future<void> saveMovieToPrefs(String key, Result movie) async {
     final prefs = await _getPrefs();
     final movieMap = movie.toJson();
     await prefs.setString(key, jsonEncode(movieMap));
@@ -23,12 +21,12 @@ class SharedPrefClient {
     await prefs.remove('favorite_$movieId');
   }
 
-  Future<SharePrefMovieModel?> getMovieFromPrefs(String key) async {
+  Future<Result?> getMovieFromPrefs(String key) async {
     final prefs = await _getPrefs();
     final movieString = prefs.getString(key);
     if (movieString != null) {
       final movieMap = jsonDecode(movieString);
-      return SharePrefMovieModel.fromJson(movieMap);
+      return Result.fromJson(movieMap);
     }
     return null;
   }

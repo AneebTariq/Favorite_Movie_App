@@ -69,71 +69,85 @@ class HomeScreen extends StatelessWidget {
                     itemCount: controller.model!.results.length,
                     itemBuilder: ((BuildContext context, index) {
                       // Build your list items using controller.model
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: getWidth(20), vertical: getHeight(10)),
-                        child: Card(
-                          elevation: 5,
-                          child: Column(
-                            children: [
-                              Container(
-                                  height: getHeight(200),
-                                  padding: EdgeInsets.only(top: getHeight(20)),
-                                  // width: getWidth(100),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.1),
-                                    // image: DecorationImage(
-                                    //     image: NetworkImage(
-                                    //         'https://images.unsplash.com${controller.model!.results[index].posterPath}'),
-                                    //     fit: BoxFit.cover)
-                                  ),
-                                  child: InkWell(
-                                    onTap: () => controller.toggleFunction(
-                                        controller.model!.results[index].id,
-                                        controller.model!.results[index]
-                                            as SharePrefMovieModel),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        controller.addToFavorite == true
-                                            ? const Icon(Icons.favorite)
-                                            : const Icon(Icons.favorite_border,
-                                                color: Colors.red),
-                                        SizedBox(
-                                          width: getWidth(20),
-                                        ),
-                                      ],
-                                    ),
-                                  )),
-                              SizedBox(
-                                height: getHeight(10),
-                              ),
-                              Text(
-                                controller.model!.results[index].title,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500),
-                              ),
-                              Text(
-                                  '${controller.model!.results[index].releaseDate.month} / ${controller.model!.results[index].releaseDate.year}'),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: getWidth(10)),
-                                child: Text(
-                                  controller.model!.results[index].overview,
-                                ),
-                              ),
-                              SizedBox(
-                                height: getHeight(10),
-                              ),
-                            ],
-                          ),
-                        ),
+                      return MovieItem(
+                        controller: controller,
+                        index: index,
                       );
                     }),
                   );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class MovieItem extends StatelessWidget {
+  const MovieItem({
+    super.key,
+    required this.controller,
+    required this.index,
+  });
+  final int index;
+  final FavoriteController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: getWidth(20), vertical: getHeight(10)),
+      child: Card(
+        elevation: 5,
+        child: Column(
+          children: [
+            Container(
+                height: getHeight(200),
+                padding: EdgeInsets.only(top: getHeight(20)),
+                // width: getWidth(100),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.1),
+                  // image: DecorationImage(
+                  //     image: NetworkImage(
+                  //         'https://images.unsplash.com${controller.model!.results[index].posterPath}'),
+                  //     fit: BoxFit.cover)
+                ),
+                child: InkWell(
+                  onTap: () => controller.toggleFunction(
+                      controller.model!.results[index].id,
+                      controller.model!.results[index]),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      controller.addToFavorite
+                          ? const Icon(Icons.favorite, color: Colors.red)
+                          : const Icon(Icons.favorite_border,
+                              color: Colors.red),
+                      SizedBox(
+                        width: getWidth(20),
+                      ),
+                    ],
+                  ),
+                )),
+            SizedBox(
+              height: getHeight(10),
+            ),
+            Text(
+              controller.model!.results[index].title,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+            Text(
+                '${controller.model!.results[index].releaseDate.month} / ${controller.model!.results[index].releaseDate.year}'),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: getWidth(10)),
+              child: Text(
+                controller.model!.results[index].overview,
+              ),
+            ),
+            SizedBox(
+              height: getHeight(10),
+            ),
+          ],
         ),
       ),
     );
