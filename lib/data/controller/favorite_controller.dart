@@ -54,7 +54,6 @@ class FavoriteController extends GetxController {
 
   Future<bool> toggleFunction(int id, SharePrefMovieModel favoriteMovie) async {
     final bool isFavorite = favoriteMovies.contains(favoriteMovie);
-    addToFavorite = !addToFavorite;
     if (!isFavorite) {
       favoriteMovies.add(favoriteMovie);
       await sharedPrefClient.saveMovieToPrefs('favorite_$id', favoriteMovie);
@@ -65,8 +64,18 @@ class FavoriteController extends GetxController {
       print("Removed from favorites: $favoriteMovie");
     }
     loadFavoriteMovies();
-    !isFavorite;
-    return addToFavorite; // Return updated favorite status
+
+    return !isFavorite; // Return updated favorite status
+  }
+
+  removeat(int id) {
+    sharedPrefClient.removeFromFavorites(id);
+    loadFavoriteMovies();
+  }
+
+  bool favoriteToggle() {
+    addToFavorite = !addToFavorite;
+    return addToFavorite;
   }
 
   Future<MoviesModel> getData() {

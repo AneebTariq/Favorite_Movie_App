@@ -18,7 +18,17 @@ class SharedPrefClient {
 
   Future<void> removeFromFavorites(int movieId) async {
     final prefs = await _getPrefs();
-    await prefs.remove("favorit$movieId");
+    final keys = prefs.getKeys();
+
+    for (String key in keys) {
+      if (key.startsWith('favorite_')) {
+        final storedMovieId = key.split('_')[1]; // Extract the ID from the key
+        if (storedMovieId == movieId.toString()) {
+          await prefs.remove(key);
+          break; // Stop after removing the matched movie ID
+        }
+      }
+    }
   }
 
   Future<SharePrefMovieModel?> getMovieFromPrefs(String key) async {

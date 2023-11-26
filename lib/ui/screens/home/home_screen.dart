@@ -115,6 +115,7 @@ class MovieItem extends StatelessWidget {
                     controller.toggleFunction(
                         controller.model!.results[index].id,
                         controller.model!.results[index]);
+                    controller.favoriteToggle();
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
